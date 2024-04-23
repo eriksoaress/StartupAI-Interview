@@ -1,11 +1,13 @@
 # import openai
 import openai
+from openai import OpenAI
+client = OpenAI()
 from dotenv import load_dotenv
 import os
 
 load_dotenv()
 
-openai.api_key = "sk-proj-WxAsw3rOgrruaV4B0MVDT3BlbkFJvvTv4tscyMEMKw6vfVii"
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 
 def ler_arquivo(nome_arquivo):
@@ -14,32 +16,37 @@ def ler_arquivo(nome_arquivo):
 
 
 def perguntas(vaga, curriculo):
-    response = openai.Completion.create(
-        engine="text-davinci-003",
-        prompt=(f"Com base na descricao da vaga: {vaga} e no curriculo: {curriculo}, escreva uma pergunta que poderia ser feita para o candidato:"),
-        max_tokens=1000,
-        n=1,
-        stop=None,
-        temperature=0.9
+    response = client.chat.completions.create(
+    model="gpt-3.5-turbo-0125",
+    response_format={ "type": "json_object" },
+    messages=[
+        {"role": "system", "content": "Você é um entrevistador conversando com um candidato a emprego com saída no formato JSON."},
+        {"role": "user", "content": f"Me de 2 perguntas personalizadas para a vaga: {vaga}, com esse curriculo: {curriculo}"}
+    ],
+    max_tokens=1000,
+    temperature=0.9
     )
-    return response.choices[0].text.strip()
-
-texto = ler_arquivo("arquivo.txt")
-pergunta = perguntas(texto)
-print(pergunta)
+    return response.choices[0].message.content
 
 
-# def avaliacao(perguntas, respostas):
-#     response = openai.Completion.create(
-#         engine="text-davinci-003",
-#         prompt=(f"Com base nas perguntas: {perguntas} e nas respostas: {respostas}, escreva uma avaliacao sobre as respostas:"),
-#         max_tokens=1000,
-#         n=1,
-#         stop=None,
-#         temperature=0.9
-#     )
-#     return response.choices[0].text.strip()
+curriculo = ler_arquivo("curriculo.txt")
+vaga = ler_arquivo("descricaovaga.txt")
+print(perguntas(vaga, curriculo))
 
-# resposta = ler_arquivo("respostas.txt")
-# avaliacao = avaliacao(pergunta, resposta)
-# print(avaliacao)
+
+def avaliacao(perguntas, respostas):
+    response = client.chat.completions.create(
+    model="gpt-3.5-turbo-0125",
+    response_format={ "type": "json_object" },
+    messages=[
+        {"role": "system", "content": "Você é um entrevistador conversando com um candidato a emprego com saída no formato JSON."},
+        {"role": "user", "content": f"Me de 2 perguntas personalizadas para a vaga: {vaga}, com esse curriculo: {curriculo}"}
+    ],
+    max_tokens=1000,
+    temperature=0.9
+    )
+    return response.choices[0].message.content
+
+resposta = ler_arquivo("respostas.txt")
+avaliacao = avaliacao(pergunta, resposta)
+print(avaliacao)
