@@ -6,16 +6,15 @@ from dotenv import load_dotenv
 import os
 
 load_dotenv()
-
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
+# def get_perguntas(vaga, curriculo):
+#     return "Perguntas"
 
-def ler_arquivo(nome_arquivo):
-    with open(nome_arquivo, "r") as arquivo:
-        return arquivo.read()
+# def get_avaliacao(perguntas, respostas):
+#     return "Avaliacao"
 
-
-def perguntas(vaga, curriculo):
+def get_perguntas(vaga, curriculo):
     response = client.chat.completions.create(
     model="gpt-3.5-turbo-0125",
     response_format={ "type": "json_object" },
@@ -23,18 +22,13 @@ def perguntas(vaga, curriculo):
         {"role": "system", "content": "Você é um entrevistador conversando com um candidato a emprego com saída no formato JSON."},
         {"role": "user", "content": f"Me de perguntas personalizadas para a vaga: {vaga}, com esse curriculo: {curriculo}"}
     ],
-    max_tokens=1000,
+    max_tokens=100,
     temperature=0.9
     )
     return response.choices[0].message.content
 
 
-curriculo = ler_arquivo("curriculo.txt")
-vaga = ler_arquivo("descricaovaga.txt")
-print(perguntas(vaga, curriculo))
-
-
-def avaliacao(perguntas, respostas):
+def get_avaliacao(perguntas, respostas):
     response = client.chat.completions.create(
     model="gpt-3.5-turbo-0125",
     response_format={ "type": "json_object" },
@@ -47,6 +41,3 @@ def avaliacao(perguntas, respostas):
     )
     return response.choices[0].message.content
 
-respostas = input("Digite as respostas: ")
-avaliacao = avaliacao(perguntas, respostas)
-print(avaliacao)
