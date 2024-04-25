@@ -1,4 +1,3 @@
-
 from fastapi import FastAPI
 from controller.entrevista_controller import entrevista_router
 
