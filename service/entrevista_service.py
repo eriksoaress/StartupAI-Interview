@@ -6,12 +6,16 @@ from dotenv import load_dotenv
 import os
 import io
 from PyPDF2 import PdfReader
+from fastapi import APIRouter,File, UploadFile
+from service.entrevista_service import *
+from model.vaga import *
+from model.avaliacao import *
 
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 
-def get_perguntas(vaga, contents):
+def get_perguntas(vaga:str, contents):
     # Lendo o arquivo PDF
     pdf_reader = PdfReader(io.BytesIO(contents))
     num_pages = len(pdf_reader.pages)
@@ -27,7 +31,7 @@ def get_perguntas(vaga, contents):
     response_format={ "type": "json_object" },
     messages=[
         {"role": "system", "content": "Você é um entrevistador conversando com um candidato a emprego com saída no formato JSON."},
-        {"role": "user", "content": f"Me de perguntas personalizadas para a vaga: {vaga}, com esse curriculo: {curriculo}"}
+        {"role": "user", "content": f"Me de exatamente 5 perguntas personalizadas e bem criativa para a vaga: {vaga}, com esse curriculo: {curriculo}, não envie o curriculo apenas as perguntas e envie-as no formato perguntanum : pergunta."}
     ],
     max_tokens=1000,
     temperature=0.9
