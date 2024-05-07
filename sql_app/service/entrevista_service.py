@@ -19,7 +19,9 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 
 
 def get_perguntas(entrevista:EntrevistaInDTO, contents, db: Session):
-    db_entrevista = EntrevistaInDTO(**entrevista.model_dump())
+    print(entrevista.model_dump())
+    db_entrevista = EntrevistaModel(**entrevista.model_dump())
+    print(db_entrevista)
     # Lendo o arquivo PDF
     pdf_reader = PdfReader(io.BytesIO(contents))
     num_pages = len(pdf_reader.pages)
@@ -41,8 +43,8 @@ def get_perguntas(entrevista:EntrevistaInDTO, contents, db: Session):
     max_tokens=1000,
     temperature=0.9
     )
-    # db.add(db_entrevista)
-    # db.commit()
+    db.add(db_entrevista)
+    db.commit()
 
     return response.choices[0].message.content
 
