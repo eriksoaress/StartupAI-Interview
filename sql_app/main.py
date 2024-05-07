@@ -1,7 +1,7 @@
 from fastapi import FastAPI
-from sql_app.controller.entrevista_controller import *
-from sql_app import models
-from .database import engine
+from controller.entrevista_controller import *
+import models
+from database import engine
 
 
 models.Base.metadata.create_all(bind=engine)

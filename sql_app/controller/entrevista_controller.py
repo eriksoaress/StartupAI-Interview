@@ -2,10 +2,8 @@ from fastapi import APIRouter,File, UploadFile
 from PyPDF2 import PdfReader
 import io
 from service.entrevista_service import *
-from model.vaga import *
-from model.avaliacao import *
 import io
-from sql_app.schemas import Entrevista, EntrevistaBase
+from schemas import Entrevista, EntrevistaBase
 
 
 
@@ -18,9 +16,9 @@ async def read_perguntas(entrevista: EntrevistaBase, file: UploadFile = File(...
     contents = await file.read()
     return get_perguntas(entrevista, contents)
 
-@entrevista_router.post("/respostas")
-def read_avaliacao(avaliacao: Avaliacao):
-    return get_avaliacao(avaliacao.perguntas, avaliacao.respostas)
+# @entrevista_router.post("/respostas")
+# def read_avaliacao(avaliacao: EntrevistaBase):
+#     return get_avaliacao(avaliacao.perguntas, avaliacao.respostas)
 
 # @entrevista_router.post("/curriculo")
 # async def read_curriculo(file: UploadFile = File(...)): 

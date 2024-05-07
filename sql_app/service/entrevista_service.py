@@ -8,11 +8,9 @@ import io
 from PyPDF2 import PdfReader
 from fastapi import APIRouter,File, UploadFile
 from service.entrevista_service import *
-from model.vaga import *
-from model.avaliacao import *
-from sql_app.schemas import Entrevista, EntrevistaBase
+from schemas import Entrevista, EntrevistaBase
 from sqlalchemy.orm import Session
-from sql_app.models import *
+from models import *
 
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
