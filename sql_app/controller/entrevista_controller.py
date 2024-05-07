@@ -7,6 +7,7 @@ from schemas_ import Entrevista, EntrevistaBase
 from sqlalchemy.orm import Session
 from typing import Annotated
 from typing import Optional
+from schemas.entrevistaInDTO import EntrevistaInDTO
 
 from database import get_db
 
@@ -15,15 +16,16 @@ from database import get_db
 entrevista_router = APIRouter( prefix="/entrevistas", tags=["entrevistas"])
 
 @entrevista_router.post("/perguntas")
-async def read_perguntas(vaga : str = Form(),
-                        descricao: Optional[str] = Form(None), 
-                        file: UploadFile = File(...), 
+async def read_perguntas(vaga : str = Form(...),
+                        descricao: Optional[str] = Form(None),
+                        file: UploadFile = File(...),
                         db: Session = Depends(get_db)):
     if not file.filename.endswith('.pdf'):
         return {"error": "Por favor, anexe um arquivo PDF"}
     contents = await file.read()
-    entrevista = EntrevistaBase(vaga=vaga, descricao=descricao)
+    entrevista = EntrevistaInDTO(vaga=vaga, descricao=descricao)
     return get_perguntas(entrevista, contents, db)
+
 
 # @entrevista_router.post("/respostas")
 # def read_avaliacao(avaliacao: EntrevistaBase):

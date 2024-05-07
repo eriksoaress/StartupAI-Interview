@@ -41,8 +41,8 @@ def get_perguntas(entrevista:EntrevistaInDTO, contents, db: Session):
     max_tokens=1000,
     temperature=0.9
     )
-    db.add(db_entrevista)
-    db.commit()
+    # db.add(db_entrevista)
+    # db.commit()
 
     return response.choices[0].message.content
 
