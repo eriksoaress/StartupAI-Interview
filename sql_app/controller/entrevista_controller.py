@@ -5,17 +5,18 @@ from service.entrevista_service import *
 from model.vaga import *
 from model.avaliacao import *
 import io
+from sql_app.schemas import Entrevista, EntrevistaBase
 
 
 
 entrevista_router = APIRouter( prefix="/entrevistas", tags=["entrevistas"])
 
-@entrevista_router.post("/perguntas")
-async def read_perguntas(vaga: str, file: UploadFile = File(...)):
+@entrevista_router.post("/perguntas", response_model=Entrevista)
+async def read_perguntas(entrevista: EntrevistaBase, file: UploadFile = File(...)):
     if not file.filename.endswith('.pdf'):
         return {"error": "Por favor, anexe um arquivo PDF"}
     contents = await file.read()
-    return get_perguntas(vaga, contents)
+    return get_perguntas(entrevista, contents)
 
 @entrevista_router.post("/respostas")
 def read_avaliacao(avaliacao: Avaliacao):

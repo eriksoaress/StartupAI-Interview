@@ -10,16 +10,21 @@ from fastapi import APIRouter,File, UploadFile
 from service.entrevista_service import *
 from model.vaga import *
 from model.avaliacao import *
+from sql_app.schemas import Entrevista, EntrevistaBase
+from sqlalchemy.orm import Session
+from sql_app.models import *
 
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 
-def get_perguntas(vaga:str, contents):
+def get_perguntas(entrevista:EntrevistaBase, contents, db: Session):
+    db_entrevista = EntrevistaModel(**entrevista.model_dump())
     # Lendo o arquivo PDF
     pdf_reader = PdfReader(io.BytesIO(contents))
     num_pages = len(pdf_reader.pages)
     curriculo = ""
+
 
     # Iterando através de cada página do PDF e extraindo o texto
     for page_num in range(num_pages):
@@ -36,10 +41,13 @@ def get_perguntas(vaga:str, contents):
     max_tokens=1000,
     temperature=0.9
     )
+    db.add(db_entrevista)
+    db.commit()
+
     return response.choices[0].message.content
 
 
-def get_avaliacao(perguntas, respostas):
+def get_avaliacao(perguntas, respostas, db: Session):
     response = client.chat.completions.create(
     model="gpt-3.5-turbo-0125",
     response_format={ "type": "json_object" },
