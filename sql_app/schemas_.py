@@ -32,7 +32,7 @@ class User(UserBase):
 
 
 class EntrevistaBase(BaseModel):
-    vaga: str
+    vaga: Optional[str]
     link_perguntas: Optional[str]
     link_respostas: Optional[str]
     link_avaliacao: Optional[str]

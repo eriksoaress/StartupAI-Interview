@@ -8,16 +8,18 @@ import io
 from PyPDF2 import PdfReader
 from fastapi import APIRouter,File, UploadFile
 from service.entrevista_service import *
-from schemas import Entrevista, EntrevistaBase
+from schemas_ import Entrevista, EntrevistaBase
 from sqlalchemy.orm import Session
 from models import *
+from database import get_db
+from schemas.entrevistaInDTO import EntrevistaInDTO
 
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 
-def get_perguntas(entrevista:EntrevistaBase, contents, db: Session):
-    db_entrevista = EntrevistaModel(**entrevista.model_dump())
+def get_perguntas(entrevista:EntrevistaInDTO, contents, db: Session):
+    db_entrevista = EntrevistaInDTO(**entrevista.model_dump())
     # Lendo o arquivo PDF
     pdf_reader = PdfReader(io.BytesIO(contents))
     num_pages = len(pdf_reader.pages)
@@ -34,7 +36,7 @@ def get_perguntas(entrevista:EntrevistaBase, contents, db: Session):
     response_format={ "type": "json_object" },
     messages=[
         {"role": "system", "content": "Você é um entrevistador conversando com um candidato a emprego com saída no formato JSON."},
-        {"role": "user", "content": f"Me de exatamente 5 perguntas personalizadas e bem criativa para a vaga: {vaga}, com esse curriculo: {curriculo}, não envie o curriculo apenas as perguntas e envie-as no formato perguntanum : pergunta."}
+        {"role": "user", "content": f"Me de exatamente 5 perguntas personalizadas e bem criativa para a vaga: {entrevista.vaga} com a seguinte descrição: {entrevista.descricao}, com esse curriculo: {curriculo}, não envie o curriculo apenas as perguntas e envie-as no formato perguntanum : pergunta."}
     ],
     max_tokens=1000,
     temperature=0.9
