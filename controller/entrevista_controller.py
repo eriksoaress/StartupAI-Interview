@@ -11,9 +11,11 @@ import io
 entrevista_router = APIRouter( prefix="/entrevistas", tags=["entrevistas"])
 
 @entrevista_router.post("/perguntas")
-async def read_perguntas(vaga: Vaga, file: UploadFile = File(...)):
-    conteudo_curriculo = await file.read()
-    return get_perguntas(vaga.descricao, conteudo_curriculo)
+async def read_perguntas(vaga: str, file: UploadFile = File(...)):
+    if not file.filename.endswith('.pdf'):
+        return {"error": "Por favor, anexe um arquivo PDF"}
+    contents = await file.read()
+    return get_perguntas(vaga, contents)
 
 @entrevista_router.post("/respostas")
 def read_avaliacao(avaliacao: Avaliacao):
