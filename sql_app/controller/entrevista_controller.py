@@ -7,8 +7,7 @@ from schemas_ import Entrevista, EntrevistaBase
 from sqlalchemy.orm import Session
 from typing import Annotated
 from typing import Optional
-from schemas.entrevistaInDTO import EntrevistaInDTO
-
+from schemas.perguntasInDTO import PerguntasInDTO
 from database import get_db
 
 
@@ -23,16 +22,10 @@ async def read_perguntas(vaga : str = Form(...),
     if not file.filename.endswith('.pdf'):
         return {"error": "Por favor, anexe um arquivo PDF"}
     contents = await file.read()
-    entrevista = EntrevistaInDTO(vaga=vaga, descricao=descricao)
+    entrevista = PerguntasInDTO(vaga=vaga, descricao=descricao)
     return get_perguntas(entrevista, contents, db)
 
 
-# @entrevista_router.post("/respostas")
-# def read_avaliacao(avaliacao: EntrevistaBase):
-#     return get_avaliacao(avaliacao.perguntas, avaliacao.respostas)
-
-# @entrevista_router.post("/curriculo")
-# async def read_curriculo(file: UploadFile = File(...)): 
-#     contents = await file.read()
-
-#     return {"text": text}
+@entrevista_router.post("/respostas")
+def read_avaliacao(entrevista_id: str, db: Session = Depends(get_db)):
+    return get_avaliacao(entrevista_id, db)
