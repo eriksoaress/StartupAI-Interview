@@ -54,10 +54,9 @@ def get_avaliacao(entrevista_id: str, respostas: str, db: Session):
     response_format={ "type": "json_object" },
     messages=[
         {"role": "system", "content": "Você é um entrevistador entrevistando um candidato a emprego com saída no formato JSON."},
-        {"role": "user", "content": f"Considerando as perguntas:{perguntas} e as respostas:{respostas}, forneça um feedback, indique os pontos fortes e fracos da resposta das respostas, como o candidato poderia melhorar na próxima vez, e o que pode transmitir para o entrevistador essas respostas."}
+        {"role": "user", "content": f"Considerando as perguntas:{perguntas} e as respostas:{respostas}, forneça um feedback no formato: pontos fortes: Destaque os pontos fortes da resposta do candidato para que ele saiiba o que fez de bom. pontos fracos: Destaque os pontos fracos da resposta do candidato para que ele saiba o que precisa melhorar."}
     ],
     max_tokens=1000,
     temperature=0.9
     )
     return response.choices[0].message.content
-
