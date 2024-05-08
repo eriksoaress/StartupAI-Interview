@@ -12,7 +12,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173/"],  # As origens que podem acessar este servidor
     allow_credentials=True,
-    allow_methods=[""],  # Métodos HTTP permitidos
-    allow_headers=[""],  # Cabeçalhos HTTP permitidos
+    allow_methods=["*"],  # Métodos HTTP permitidos
+    allow_headers=["*"],  # Cabeçalhos HTTP permitidos
 )
 app.include_router(entrevista_router)
