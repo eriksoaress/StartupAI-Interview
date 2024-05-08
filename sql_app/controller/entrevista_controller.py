@@ -19,6 +19,7 @@ async def read_perguntas(vaga : str = Form(...),
                         descricao: Optional[str] = Form(None),
                         file: UploadFile = File(...),
                         db: Session = Depends(get_db)):
+    
     if not file.filename.endswith('.pdf'):
         return {"error": "Por favor, anexe um arquivo PDF"}
     contents = await file.read()
@@ -27,5 +28,7 @@ async def read_perguntas(vaga : str = Form(...),
 
 
 @entrevista_router.post("/respostas")
-def read_avaliacao(entrevista_id: str, db: Session = Depends(get_db)):
-    return get_avaliacao(entrevista_id, db)
+def read_avaliacao(entrevista_id: str,
+                   link_audio: str,
+                    db: Session = Depends(get_db)):
+    return get_avaliacao(entrevista_id, link_audio, db)

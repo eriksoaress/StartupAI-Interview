@@ -17,7 +17,7 @@ class EntrevistaModel(Base):
     id = Column(Integer, primary_key=True, index=True,autoincrement=True)
     vaga = Column(String(50), nullable=False)
     descricao = Column(String(250), nullable=True)
-    link_perguntas = Column(String(250), nullable=True)
+    link_perguntas = Column(String(1000), nullable=True)
     link_avaliacao = Column(String(250), nullable=True)
     link_audio = Column(String(250), nullable=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=True)

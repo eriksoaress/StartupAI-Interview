@@ -40,15 +40,15 @@ def get_perguntas(entrevista:PerguntasInDTO, contents, db: Session):
     max_tokens=1000,
     temperature=0.9
     )
+    db_entrevista.link_perguntas = response.choices[0].message.content
     db.add(db_entrevista)
     db.commit()
 
     return response.choices[0].message.content
 
 
-def get_avaliacao(entrevista_id: str, db: Session):
+def get_avaliacao(entrevista_id: str, respostas: str, db: Session):
     perguntas = db.query(EntrevistaModel.link_perguntas).filter(EntrevistaModel.id == entrevista_id).first()
-    respostas = db.query(EntrevistaModel.link_audio).filter(EntrevistaModel.id == entrevista_id).first()
     response = client.chat.completions.create(
     model="gpt-3.5-turbo-0125",
     response_format={ "type": "json_object" },
