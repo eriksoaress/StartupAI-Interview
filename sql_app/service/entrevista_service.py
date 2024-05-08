@@ -1,7 +1,6 @@
 # import openai
 import openai
 from openai import OpenAI
-client = OpenAI()
 from dotenv import load_dotenv
 import os
 import io
@@ -15,6 +14,7 @@ from schemas.perguntasInDTO import PerguntasInDTO
 
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
+client = OpenAI()
 
 
 def get_perguntas(entrevista:PerguntasInDTO, contents, db: Session):
