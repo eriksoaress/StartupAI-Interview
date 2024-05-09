@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from controller.entrevista_controller import *
+from controllers.entrevista_controller import *
 import models
 from database import engine
 from fastapi.middleware.cors import CORSMiddleware
