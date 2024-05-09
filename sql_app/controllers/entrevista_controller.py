@@ -1,13 +1,8 @@
 from fastapi import APIRouter,File, UploadFile, Depends,Form
-from PyPDF2 import PdfReader
-import io
 from services.entrevista_service import *
-import io
-from schemas_ import Entrevista, EntrevistaBase
 from sqlalchemy.orm import Session
-from typing import Annotated
 from typing import Optional
-from dtos.perguntasInDTO import PerguntasInDTO
+from schemas.perguntasInDTO import PerguntasInDTO
 from database import get_db
 
 
