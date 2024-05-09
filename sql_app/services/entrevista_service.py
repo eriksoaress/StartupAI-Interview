@@ -1,5 +1,5 @@
-# import openai
 import openai
+import boto3
 from openai import OpenAI
 from dotenv import load_dotenv
 import os
@@ -10,11 +10,54 @@ from schemas_ import Entrevista, EntrevistaBase
 from sqlalchemy.orm import Session
 from models import *
 from database import get_db
-from sql_app.dtos.perguntasInDTO import PerguntasInDTO
+from dtos.perguntasInDTO import PerguntasInDTO
 
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
 client = OpenAI()
+
+s3_client = boto3.client(
+    's3',
+    aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'),
+    aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY'))
+
+
+def cria_arquivo_perguntas(mensagem, id_entrevista):
+    nome_arquivo = f'perguntas_{id_entrevista}.txt'
+    with open(nome_arquivo, 'w') as file:
+        file.write(mensagem)
+    bucket_name = 'pontochave'
+    s3_client.upload_file(nome_arquivo, bucket_name, nome_arquivo)
+    os.remove(nome_arquivo)
+    return 
+
+def cria_arquivo_avaliacao(mensagem, id_entrevista):
+    nome_arquivo = f'avaliacao_{id_entrevista}.txt'
+    with open(nome_arquivo, 'w') as file:
+        file.write(mensagem)
+    bucket_name = 'pontochave'
+    s3_client.upload_file(nome_arquivo, bucket_name, nome_arquivo)
+    os.remove(nome_arquivo)
+    return
+
+def cria_arquivo_respostas(mensagem, id_entrevista):
+    nome_arquivo = f'respostas_{id_entrevista}.txt'
+    with open(nome_arquivo, 'w') as file:
+        file.write(mensagem)
+    bucket_name = 'pontochave'
+    s3_client.upload_file(nome_arquivo, bucket_name, nome_arquivo)
+    os.remove(nome_arquivo)
+    return
+
+def get_text_from_s3(link):
+    bucket_name = 'pontochave'
+    file_name = link.split('/')[-1]
+    s3_client.download_file(bucket_name, file_name, file_name)
+    with open(file_name, 'r') as file:
+        text = file.read()
+    os.remove(file_name)
+    return text
+
 
 
 def get_perguntas(entrevista:PerguntasInDTO, contents, db: Session):
@@ -23,7 +66,6 @@ def get_perguntas(entrevista:PerguntasInDTO, contents, db: Session):
     pdf_reader = PdfReader(io.BytesIO(contents))
     num_pages = len(pdf_reader.pages)
     curriculo = ""
-
 
     # Iterando através de cada página do PDF e extraindo o texto
     for page_num in range(num_pages):
@@ -40,7 +82,11 @@ def get_perguntas(entrevista:PerguntasInDTO, contents, db: Session):
     max_tokens=1000,
     temperature=0.9
     )
-    db_entrevista.link_perguntas = response.choices[0].message.content
+
+    # pega o proximo id da tabela e cria o arquivo de perguntas com o id
+    id_entrevista = db.query(EntrevistaModel.id).order_by(EntrevistaModel.id.desc()).first().id + 1
+    cria_arquivo_perguntas(response.choices[0].message.content, id_entrevista)
+    db_entrevista.link_perguntas = f'https://pontochave.s3.amazonaws.com/perguntas_{id_entrevista}.txt'
     db.add(db_entrevista)
     db.commit()
 
@@ -48,7 +94,11 @@ def get_perguntas(entrevista:PerguntasInDTO, contents, db: Session):
 
 
 def get_avaliacao(entrevista_id: str, respostas: str, db: Session):
-    perguntas = db.query(EntrevistaModel.link_perguntas).filter(EntrevistaModel.id == entrevista_id).first()
+    cria_arquivo_respostas(respostas, entrevista_id)
+    db_entrevista = db.query(EntrevistaModel).filter(EntrevistaModel.id == entrevista_id).first()
+    db_entrevista.link_audio = f'https://pontochave.s3.amazonaws.com/respostas_{entrevista_id}.txt'
+
+    perguntas = get_text_from_s3(db.query(EntrevistaModel.link_perguntas).filter(EntrevistaModel.id == entrevista_id).first()[0])
     response = client.chat.completions.create(
     model="gpt-3.5-turbo-0125",
     response_format={ "type": "json_object" },
@@ -59,4 +109,7 @@ def get_avaliacao(entrevista_id: str, respostas: str, db: Session):
     max_tokens=1000,
     temperature=0.9
     )
+    cria_arquivo_avaliacao(response.choices[0].message.content, entrevista_id)
+    db_entrevista.link_avaliacao = f'https://pontochave.s3.amazonaws.com/avaliacao_{entrevista_id}.txt'
+    db.commit()
     return response.choices[0].message.content

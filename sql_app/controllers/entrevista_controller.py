@@ -7,7 +7,7 @@ from schemas_ import Entrevista, EntrevistaBase
 from sqlalchemy.orm import Session
 from typing import Annotated
 from typing import Optional
-from sql_app.dtos.perguntasInDTO import PerguntasInDTO
+from dtos.perguntasInDTO import PerguntasInDTO
 from database import get_db
 
 
