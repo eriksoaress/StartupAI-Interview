@@ -10,6 +10,7 @@ from sqlalchemy.orm import Session
 from models import *
 from database import get_db
 from schemas.perguntasInDTO import PerguntasInDTO
+from models_ import *
 
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
