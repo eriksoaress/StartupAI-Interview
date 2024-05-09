@@ -3,6 +3,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import os
 from dotenv import load_dotenv
+from contextlib import contextmanager
 
 
 load_dotenv()
@@ -15,6 +16,7 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()
 
+@contextmanager
 def get_db():
     db = SessionLocal()
     try:

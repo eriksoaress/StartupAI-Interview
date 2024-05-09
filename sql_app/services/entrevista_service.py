@@ -6,11 +6,9 @@ import os
 import io
 from PyPDF2 import PdfReader
 from services.entrevista_service import *
-from schemas_ import Entrevista, EntrevistaBase
 from sqlalchemy.orm import Session
-from models import *
-from database import get_db
-from dtos.perguntasInDTO import PerguntasInDTO
+from models_ import *
+from schemas.perguntasInDTO import PerguntasInDTO
 
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")

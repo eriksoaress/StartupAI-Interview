@@ -1,11 +1,12 @@
 from fastapi import FastAPI
 from controllers.entrevista_controller import *
-import models
+import models_ as models_
 from database import engine
 from fastapi.middleware.cors import CORSMiddleware
+from controllers.user import *
 
 
-models.Base.metadata.create_all(bind=engine)
+models_.Base.metadata.create_all(bind=engine)
 app = FastAPI()
 
 app.add_middleware(
@@ -16,3 +17,4 @@ app.add_middleware(
     allow_headers=["*"],  # Cabeçalhos HTTP permitidos
 )
 app.include_router(entrevista_router)
+app.include_router(user_router)
