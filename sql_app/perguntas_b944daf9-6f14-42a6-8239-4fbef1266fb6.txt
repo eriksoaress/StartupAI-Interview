@@ -1,0 +1,5 @@
+{
+    "pergunta1": "Como você aplicou seus conhecimentos em Django, HTML, CSS e metodologias ágeis no desenvolvimento da plataforma de relacionamento entre colaboradores na PagSeguro?",
+    "pergunta2": "Qual foi a sua contribuição na automatização de coleta de dados para relatórios e pesquisas no Bradesco Asset utilizando Python, R e VBA?",
+    "pergunta3": "Como você utilizou o Power BI e Python para criar dashboards durante o estágio de férias na Genial Investimentos?"
+}
