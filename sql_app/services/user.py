@@ -9,7 +9,7 @@ class UserService(metaclass=SingletonMeta):
         # self.db = db
         self.user_repo = UserRepository()
 
-    def signup(self,user: UserTest):
+    def signup(self,user: UserTest,db: Session):
         user_ = UserModelTest(name=user.name)
-        return self.user_repo.signup(user_)
+        return self.user_repo.signup(user_,db)
 

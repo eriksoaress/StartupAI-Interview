@@ -11,6 +11,7 @@ from models import *
 from database import get_db
 from schemas.perguntasInDTO import PerguntasInDTO
 from models_ import *
+import uuid
 
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -84,9 +85,10 @@ def get_perguntas(entrevista:PerguntasInDTO, contents, db: Session):
     )
 
     # pega o proximo id da tabela e cria o arquivo de perguntas com o id
-    id_entrevista = db.query(EntrevistaModel.id).order_by(EntrevistaModel.id.desc()).first().id + 1
-    cria_arquivo_perguntas(response.choices[0].message.content, id_entrevista)
-    db_entrevista.link_perguntas = f'https://pontochave.s3.amazonaws.com/perguntas_{id_entrevista}.txt'
+    uuid_ = uuid.uuid4()
+
+    cria_arquivo_perguntas(response.choices[0].message.content, uuid_)
+    db_entrevista.link_perguntas = f'https://pontochave.s3.amazonaws.com/perguntas_{uuid_}.txt'
     db.add(db_entrevista)
     db.commit()
 

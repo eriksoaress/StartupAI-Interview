@@ -1,0 +1,5 @@
+{
+  "pergunta1": "Como você acredita que suas experiências anteriores, como os estágios na GM Financial e BTG Pactual, podem contribuir para o sucesso nesta vaga que exige conhecimentos em Python, SQL e PowerBI?",
+  "pergunta2": "Como você costuma lidar com desafios técnicos complexos, como os que encontrou durante sua atuação nos estágios de férias?",
+  "pergunta3": "Além das tecnologias mencionadas em seu currículo, como você se mantém atualizado e quais outras habilidades técnicas você acha importante para um profissional da área de Ciência da Computação? "
+}

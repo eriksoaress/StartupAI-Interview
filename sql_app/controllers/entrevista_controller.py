@@ -5,8 +5,6 @@ from typing import Optional
 from schemas.perguntasInDTO import PerguntasInDTO
 from database import get_db
 
-
-
 entrevista_router = APIRouter( prefix="/entrevistas", tags=["entrevistas"])
 
 @entrevista_router.post("/perguntas")

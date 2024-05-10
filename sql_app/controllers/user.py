@@ -10,10 +10,10 @@ service = UserService()
 
 @user_router.post("/signup")
 async def signup(
-    user : UserTest
+    user : UserTest,
     # nome : str = Form(...),
     #              email: str = Form(...),
     #              assinatura: str = Form(...),
     #              db: Session = Depends(get_db)
-                 ):
-    return service.signup(user)
+    db: Session = Depends(get_db)):
+    return service.signup(user,db)
