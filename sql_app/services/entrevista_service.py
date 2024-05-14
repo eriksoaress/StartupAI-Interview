@@ -27,7 +27,7 @@ def cria_arquivo_perguntas(mensagem, id_entrevista):
     nome_arquivo = f'perguntas_{id_entrevista}.txt'
     with open(nome_arquivo, 'w') as file:
         file.write(mensagem)
-    bucket_name = 'pontochave'
+    bucket_name = 'pontochaveai'
     s3_client.upload_file(nome_arquivo, bucket_name, nome_arquivo)
     os.remove(nome_arquivo)
     return 
@@ -36,7 +36,7 @@ def cria_arquivo_avaliacao(mensagem, id_entrevista):
     nome_arquivo = f'avaliacao_{id_entrevista}.txt'
     with open(nome_arquivo, 'w') as file:
         file.write(mensagem)
-    bucket_name = 'pontochave'
+    bucket_name = 'pontochaveai'
     s3_client.upload_file(nome_arquivo, bucket_name, nome_arquivo)
     os.remove(nome_arquivo)
     return
@@ -45,13 +45,22 @@ def cria_arquivo_respostas(mensagem, id_entrevista):
     nome_arquivo = f'respostas_{id_entrevista}.txt'
     with open(nome_arquivo, 'w') as file:
         file.write(mensagem)
-    bucket_name = 'pontochave'
+    bucket_name = 'pontochaveai'
+    s3_client.upload_file(nome_arquivo, bucket_name, nome_arquivo)
+    os.remove(nome_arquivo)
+    return
+
+def cria_arquivo_descricao(mensagem, id_entrevista):
+    nome_arquivo = f'descricao_{id_entrevista}.txt'
+    with open(nome_arquivo, 'w') as file:
+        file.write(mensagem)
+    bucket_name = 'pontochaveai'
     s3_client.upload_file(nome_arquivo, bucket_name, nome_arquivo)
     os.remove(nome_arquivo)
     return
 
 def get_text_from_s3(link):
-    bucket_name = 'pontochave'
+    bucket_name = 'pontochaveai'
     file_name = link.split('/')[-1]
     s3_client.download_file(bucket_name, file_name, file_name)
     with open(file_name, 'r') as file:
@@ -78,7 +87,7 @@ def get_perguntas(entrevista:PerguntasInDTO, contents, db: Session):
     response_format={ "type": "json_object" },
     messages=[
         {"role": "system", "content": "Você é um entrevistador entrevistando um candidato a emprego com saída no formato JSON."},
-        {"role": "user", "content": f"Me de exatamente 3 perguntas personalizadas para a vaga: {entrevista.vaga} com a seguinte descrição: {entrevista.descricao}, com esse curriculo: {curriculo}, envie-as no formato 'pergunta(numero) : pergunta'."}
+        {"role": "user", "content": f"Me de exatamente 3 perguntas personalizadas para a vaga: {entrevista.vaga} com a seguinte descrição: {entrevista.link_descricao}, com esse curriculo: {curriculo}, envie-as no formato 'pergunta(numero) : pergunta'."}
     ],
     max_tokens=1000,
     temperature=0.9
@@ -86,9 +95,12 @@ def get_perguntas(entrevista:PerguntasInDTO, contents, db: Session):
 
     # pega o proximo id da tabela e cria o arquivo de perguntas com o id
     uuid_ = uuid.uuid4()
-
+    print(entrevista.link_descricao)
+    print(entrevista.vaga)
     cria_arquivo_perguntas(response.choices[0].message.content, uuid_)
-    db_entrevista.link_perguntas = f'https://pontochave.s3.amazonaws.com/perguntas_{uuid_}.txt'
+    cria_arquivo_descricao(entrevista.link_descricao, uuid_)
+    db_entrevista.link_perguntas = f'https://pontochaveai.s3.amazonaws.com/perguntas_{uuid_}.txt'
+    db_entrevista.link_descricao = f'https://pontochaveai.s3.amazonaws.com/descricao_{uuid_}.txt'
     db.add(db_entrevista)
     db.commit()
 
@@ -98,7 +110,7 @@ def get_perguntas(entrevista:PerguntasInDTO, contents, db: Session):
 def get_avaliacao(entrevista_id: str, respostas: str, db: Session):
     cria_arquivo_respostas(respostas, entrevista_id)
     db_entrevista = db.query(EntrevistaModel).filter(EntrevistaModel.id == entrevista_id).first()
-    db_entrevista.link_audio = f'https://pontochave.s3.amazonaws.com/respostas_{entrevista_id}.txt'
+    db_entrevista.link_audio = f'https://pontochaveai.s3.amazonaws.com/respostas_{entrevista_id}.txt'
 
     perguntas = get_text_from_s3(db.query(EntrevistaModel.link_perguntas).filter(EntrevistaModel.id == entrevista_id).first()[0])
     response = client.chat.completions.create(
@@ -112,6 +124,6 @@ def get_avaliacao(entrevista_id: str, respostas: str, db: Session):
     temperature=0.9
     )
     cria_arquivo_avaliacao(response.choices[0].message.content, entrevista_id)
-    db_entrevista.link_avaliacao = f'https://pontochave.s3.amazonaws.com/avaliacao_{entrevista_id}.txt'
+    db_entrevista.link_avaliacao = f'https://pontochaveai.s3.amazonaws.com/avaliacao_{entrevista_id}.txt'
     db.commit()
     return response.choices[0].message.content

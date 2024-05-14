@@ -9,14 +9,14 @@ entrevista_router = APIRouter( prefix="/entrevistas", tags=["entrevistas"])
 
 @entrevista_router.post("/perguntas")
 async def read_perguntas(vaga : str = Form(...),
-                        descricao: Optional[str] = Form(None),
+                        link_descricao: Optional[str] = Form(None),
                         file: UploadFile = File(...),
                         db: Session = Depends(get_db)):
     
     if not file.filename.endswith('.pdf'):
         return {"error": "Por favor, anexe um arquivo PDF"}
     contents = await file.read()
-    entrevista = PerguntasInDTO(vaga=vaga, descricao=descricao)
+    entrevista = PerguntasInDTO(vaga=vaga, link_descricao=link_descricao)
     return get_perguntas(entrevista, contents, db)
 
 
