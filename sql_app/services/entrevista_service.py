@@ -95,8 +95,6 @@ def get_perguntas(entrevista:PerguntasInDTO, contents, db: Session):
 
     # pega o proximo id da tabela e cria o arquivo de perguntas com o id
     uuid_ = uuid.uuid4()
-    print(entrevista.link_descricao)
-    print(entrevista.vaga)
     cria_arquivo_perguntas(response.choices[0].message.content, uuid_)
     cria_arquivo_descricao(entrevista.link_descricao, uuid_)
     db_entrevista.link_perguntas = f'https://pontochaveai.s3.amazonaws.com/perguntas_{uuid_}.txt'

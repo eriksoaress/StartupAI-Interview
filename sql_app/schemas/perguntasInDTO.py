@@ -4,3 +4,4 @@ from typing import Optional
 class PerguntasInDTO(BaseModel):
     vaga: str
     link_descricao : Optional[str] = None
+    user_id: int

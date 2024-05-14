@@ -15,14 +15,15 @@ service = UserService()
 async def read_perguntas(vaga : str = Form(...),
                         link_descricao: Optional[str] = Form(None),
                         file: UploadFile = File(...),
+                        user_id: int = Form(...),
                         db: Session = Depends(get_db),
                         token: str = Depends(oauth2_scheme)):
-    user = service(db, token)
+    user = service.get_current_user(db, token)
     print(user)
     if not file.filename.endswith('.pdf'):
         return {"error": "Por favor, anexe um arquivo PDF"}
     contents = await file.read()
-    entrevista = PerguntasInDTO(vaga=vaga, link_descricao=link_descricao)
+    entrevista = PerguntasInDTO(vaga=vaga, link_descricao=link_descricao, user_id=user_id)
     return get_perguntas(entrevista, contents, db)
 
 
