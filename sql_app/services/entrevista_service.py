@@ -25,7 +25,7 @@ s3_client = boto3.client(
 
 def cria_arquivo_perguntas(mensagem, id_entrevista):
     nome_arquivo = f'perguntas_{id_entrevista}.txt'
-    with open(nome_arquivo, 'w') as file:
+    with open(nome_arquivo, 'w', encoding='utf-8') as file:
         file.write(mensagem)
     bucket_name = 'pontochaveai'
     s3_client.upload_file(nome_arquivo, bucket_name, nome_arquivo)
@@ -34,7 +34,7 @@ def cria_arquivo_perguntas(mensagem, id_entrevista):
 
 def cria_arquivo_avaliacao(mensagem, id_entrevista):
     nome_arquivo = f'avaliacao_{id_entrevista}.txt'
-    with open(nome_arquivo, 'w') as file:
+    with open(nome_arquivo, 'w', encoding='utf-8') as file:
         file.write(mensagem)
     bucket_name = 'pontochaveai'
     s3_client.upload_file(nome_arquivo, bucket_name, nome_arquivo)
@@ -43,7 +43,7 @@ def cria_arquivo_avaliacao(mensagem, id_entrevista):
 
 def cria_arquivo_respostas(mensagem, id_entrevista):
     nome_arquivo = f'respostas_{id_entrevista}.txt'
-    with open(nome_arquivo, 'w') as file:
+    with open(nome_arquivo, 'w', encoding='utf-8') as file:
         file.write(mensagem)
     bucket_name = 'pontochaveai'
     s3_client.upload_file(nome_arquivo, bucket_name, nome_arquivo)
@@ -52,7 +52,7 @@ def cria_arquivo_respostas(mensagem, id_entrevista):
 
 def cria_arquivo_descricao(mensagem, id_entrevista):
     nome_arquivo = f'descricao_{id_entrevista}.txt'
-    with open(nome_arquivo, 'w') as file:
+    with open(nome_arquivo, 'w', encoding='utf-8') as file:
         file.write(mensagem)
     bucket_name = 'pontochaveai'
     s3_client.upload_file(nome_arquivo, bucket_name, nome_arquivo)
