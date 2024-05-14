@@ -50,6 +50,15 @@ def cria_arquivo_respostas(mensagem, id_entrevista):
     os.remove(nome_arquivo)
     return
 
+def cria_arquivo_descricao(mensagem, id_entrevista):
+    nome_arquivo = f'descricao_{id_entrevista}.txt'
+    with open(nome_arquivo, 'w') as file:
+        file.write(mensagem)
+    bucket_name = 'pontochaveai'
+    s3_client.upload_file(nome_arquivo, bucket_name, nome_arquivo)
+    os.remove(nome_arquivo)
+    return
+
 def get_text_from_s3(link):
     bucket_name = 'pontochaveai'
     file_name = link.split('/')[-1]
@@ -78,7 +87,7 @@ def get_perguntas(entrevista:PerguntasInDTO, contents, db: Session):
     response_format={ "type": "json_object" },
     messages=[
         {"role": "system", "content": "Você é um entrevistador entrevistando um candidato a emprego com saída no formato JSON."},
-        {"role": "user", "content": f"Me de exatamente 3 perguntas personalizadas para a vaga: {entrevista.vaga} com a seguinte descrição: {entrevista.descricao}, com esse curriculo: {curriculo}, envie-as no formato 'pergunta(numero) : pergunta'."}
+        {"role": "user", "content": f"Me de exatamente 3 perguntas personalizadas para a vaga: {entrevista.vaga} com a seguinte descrição: {entrevista.link_descricao}, com esse curriculo: {curriculo}, envie-as no formato 'pergunta(numero) : pergunta'."}
     ],
     max_tokens=1000,
     temperature=0.9
@@ -86,9 +95,12 @@ def get_perguntas(entrevista:PerguntasInDTO, contents, db: Session):
 
     # pega o proximo id da tabela e cria o arquivo de perguntas com o id
     uuid_ = uuid.uuid4()
-
+    print(entrevista.link_descricao)
+    print(entrevista.vaga)
     cria_arquivo_perguntas(response.choices[0].message.content, uuid_)
+    cria_arquivo_descricao(entrevista.link_descricao, uuid_)
     db_entrevista.link_perguntas = f'https://pontochaveai.s3.amazonaws.com/perguntas_{uuid_}.txt'
+    db_entrevista.link_descricao = f'https://pontochaveai.s3.amazonaws.com/descricao_{uuid_}.txt'
     db.add(db_entrevista)
     db.commit()
 
