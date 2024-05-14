@@ -17,3 +17,6 @@ class UserRepository(metaclass= SingletonMeta):
             db.close()
         print("User added")
         return user_db
+    
+    def get_user(self,db: Session, email: str):
+        return db.query(UserModel).filter(UserModel.email == email).first()

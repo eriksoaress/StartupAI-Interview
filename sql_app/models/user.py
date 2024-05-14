@@ -8,9 +8,9 @@ class UserModel(Base):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    name = Column(String(50), nullable=False)
-    email = Column(String(50), nullable=False)
-    password = Column(String(50), nullable=False)
+    name = Column(String(75), nullable=False)
+    email = Column(String(75), nullable=False)
+    password = Column(String(200), nullable=False)
     is_active = Column(Boolean, nullable=False)
     role = Column(Enum(Roles), nullable=False)
     

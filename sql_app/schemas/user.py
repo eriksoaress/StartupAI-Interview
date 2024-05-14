@@ -8,3 +8,11 @@ class UserIn(BaseModel):
 
 class UserTest(BaseModel):
     name: str
+
+class UserOut(BaseModel):
+    name: str
+    email: str
+    role: Roles
+    is_active: bool
+    id: int
+    
