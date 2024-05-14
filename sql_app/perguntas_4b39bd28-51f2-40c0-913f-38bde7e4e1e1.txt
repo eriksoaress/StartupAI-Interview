@@ -1,0 +1,5 @@
+{
+    "pergunta1": "Gustavo, em seus estágios de férias na GM Financial e BTG Pactual, você mencionou ter aplicado as tecnologias Python, SQL e PowerBI. Pode compartilhar uma situação específica em que utilizou essas habilidades para automatizar processos ou analisar dados de forma eficaz?",
+    "pergunta2": "Como você descreveria sua experiência com o desenvolvimento de dashboards para auxiliar rotinas de risco de crédito durante seu estágio na BTG Pactual? Quais foram os principais desafios enfrentados e como você os superou?",
+    "pergunta3": "Além das tecnologias mencionadas em seu currículo, como Python, SQL, PowerBI e outras, existe alguma outra habilidade técnica ou ferramenta que você gostaria de destacar como relevante para a vaga de estágio em automação e análise de dados?"
+}

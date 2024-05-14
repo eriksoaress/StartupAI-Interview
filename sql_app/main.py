@@ -6,7 +6,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from controllers.user import *
 from models import user
 
-
 models_.Base.metadata.create_all(bind=engine)
 user.Base.metadata.create_all(bind=engine)
 
