@@ -4,15 +4,21 @@ from sqlalchemy.orm import Session
 from typing import Optional
 from schemas.perguntasInDTO import PerguntasInDTO
 from database import get_db
+from services.user import *
 
 entrevista_router = APIRouter( prefix="/entrevistas", tags=["entrevistas"])
+
+
+service = UserService()
 
 @entrevista_router.post("/perguntas")
 async def read_perguntas(vaga : str = Form(...),
                         link_descricao: Optional[str] = Form(None),
                         file: UploadFile = File(...),
-                        db: Session = Depends(get_db)):
-    
+                        db: Session = Depends(get_db),
+                        token: str = Depends(oauth2_scheme)):
+    user = service(db, token)
+    print(user)
     if not file.filename.endswith('.pdf'):
         return {"error": "Por favor, anexe um arquivo PDF"}
     contents = await file.read()

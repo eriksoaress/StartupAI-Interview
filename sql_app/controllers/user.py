@@ -17,10 +17,10 @@ async def signup(
 
 @user_router.post("/token")
 async def login(
-    username: str = Form(...),
+    email: str = Form(...),
     password: str = Form(...),
     db: Session = Depends(get_db)):
-    user = service.authenticate_user(db, username, password)
+    user = service.authenticate_user(db, email, password)
     if not user:
         raise HTTPException(
             status_code=400, detail="Incorrect username or password"
