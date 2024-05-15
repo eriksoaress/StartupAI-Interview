@@ -28,7 +28,7 @@ async def read_perguntas(vaga : str = Form(...),
 
 
 @entrevista_router.post("/respostas")
-def read_avaliacao(entrevista_id: str,
-                   link_audio: str,
+def read_avaliacao(entrevista_id: str = Form(...),
+                   link_audio: str = Form(...),
                     db: Session = Depends(get_db)):
     return get_avaliacao(entrevista_id, link_audio, db)
