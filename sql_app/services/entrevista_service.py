@@ -87,7 +87,7 @@ def get_perguntas(entrevista:PerguntasInDTO, contents, db: Session):
     response_format={ "type": "json_object" },
     messages=[
         {"role": "system", "content": "Você é um entrevistador entrevistando um candidato a emprego com saída no formato JSON."},
-        {"role": "user", "content": "Me de exatamente 3 perguntas personalizadas para a vaga: "+entrevista.vaga+" com a seguinte descrição: "+entrevista.link_descricao+", com esse curriculo: {curriculo}, envie-as no seguinte formato {'pergunta(numero)': 'pergunta'}."}
+        {"role": "user", "content": "Me de exatamente 3 perguntas personalizadas para a vaga: "+entrevista.vaga+" com a seguinte descrição: "+entrevista.link_descricao+", com esse curriculo: "+curriculo+", envie-as no seguinte formato {'pergunta(numero)': 'pergunta'}."}
     ],
     max_tokens=1000,
     temperature=0.9
@@ -111,12 +111,15 @@ def get_avaliacao(entrevista_id: str, respostas: str, db: Session):
     db_entrevista.link_audio = f'https://pontochaveai.s3.amazonaws.com/respostas_{entrevista_id}.txt'
 
     perguntas = get_text_from_s3(db.query(EntrevistaModel.link_perguntas).filter(EntrevistaModel.id == entrevista_id).first()[0])
+    print(perguntas)
+    print("****************************")
+    print(respostas)
     response = client.chat.completions.create(
-    model="gpt-3.5-turbo-0125",
+    model="gpt-4o",
     response_format={ "type": "json_object" },
     messages=[
         {"role": "system", "content": "Você é um entrevistador rígido entrevistando um candidato a emprego com saída no formato JSON. Utilize o pronome 'Você' para se referir ao candidato."},
-        {"role": "user", "content": "Considerando as perguntas:["+perguntas+"] e somente as respostas:["+respostas+"], forneça um feedback com a saída no seguinte formato: {'pontos fortes': {'resposta1': (feedback), 'resposta2': (feedback)}, 'pontos fracos: {resposta1: (feedback), resposta2: (feedback)}}. Siga essa estrutura de JSON para cada uma das respostas das perguntas. Coloque nos pontos fracos o que o candidato pode melhorar e o motivo."}
+        {"role": "user", "content": "Considerando as perguntas:["+perguntas+"] e somente as respostas:["+respostas+"], forneça um feedback com a saída no seguinte formato: {'pontos fortes': {'resposta(numero)': (feedback), 'resposta(numero)': (feedback)}, 'pontos fracos': {'resposta(numero)': (feedback), 'resposta(numero)': (feedback)} }. Siga essa estrutura de JSON para cada uma das respostas das perguntas (considere também deixar o valor para as chaves dos pontos fortes e fracos em branco caso não seja conveniente colocar algo, mas mantenha todas as chaves no formato resposta(numero)). Coloque nos pontos fracos o que o candidato pode melhorar e o motivo."}
     ],
     max_tokens=1000,
     temperature=0.9
