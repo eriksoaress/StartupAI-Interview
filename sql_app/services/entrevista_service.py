@@ -102,7 +102,7 @@ def get_perguntas(entrevista:PerguntasInDTO, contents, db: Session):
     db.add(db_entrevista)
     db.commit()
 
-    return response.choices[0].message.content
+    return response.choices[0].message.content, db_entrevista.id
 
 
 def get_avaliacao(entrevista_id: str, respostas: str, db: Session):
