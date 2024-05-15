@@ -32,7 +32,7 @@ async def token(
     )
     return {"access_token": access_token, "token_type": "bearer"}
 
-@user_router.get("/users/me")
+@user_router.get("/me")
 async def read_users_me(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     current_user = service.get_current_user(db, token)
     return current_user
