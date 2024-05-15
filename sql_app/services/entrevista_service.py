@@ -87,7 +87,7 @@ def get_perguntas(entrevista:PerguntasInDTO, contents, db: Session):
     response_format={ "type": "json_object" },
     messages=[
         {"role": "system", "content": "Você é um entrevistador entrevistando um candidato a emprego com saída no formato JSON."},
-        {"role": "user", "content": f"Me de exatamente 3 perguntas personalizadas para a vaga: {entrevista.vaga} com a seguinte descrição: {entrevista.link_descricao}, com esse curriculo: {curriculo}, envie-as no formato 'pergunta(numero) : pergunta'."}
+        {"role": "user", "content": "Me de exatamente 3 perguntas personalizadas para a vaga: "+entrevista.vaga+" com a seguinte descrição: "+entrevista.link_descricao+", com esse curriculo: {curriculo}, envie-as no seguinte formato {'pergunta(numero)': 'pergunta'}."}
     ],
     max_tokens=1000,
     temperature=0.9
@@ -115,8 +115,8 @@ def get_avaliacao(entrevista_id: str, respostas: str, db: Session):
     model="gpt-3.5-turbo-0125",
     response_format={ "type": "json_object" },
     messages=[
-        {"role": "system", "content": "Você é um entrevistador entrevistando um candidato a emprego com saída no formato JSON."},
-        {"role": "user", "content": f"Considerando as perguntas:{perguntas} e as respostas:{respostas}, forneça um feedback no formato: pontos fortes: Destaque os pontos fortes da resposta do candidato para que ele saiiba o que fez de bom. pontos fracos: Destaque os pontos fracos da resposta do candidato para que ele saiba o que precisa melhorar."}
+        {"role": "system", "content": "Você é um entrevistador rígido entrevistando um candidato a emprego com saída no formato JSON. Utilize o pronome 'Você' para se referir ao candidato."},
+        {"role": "user", "content": "Considerando as perguntas:["+perguntas+"] e somente as respostas:["+respostas+"], forneça um feedback com a saída no seguinte formato: {'pontos fortes': {'resposta1': (feedback), 'resposta2': (feedback)}, 'pontos fracos: {resposta1: (feedback), resposta2: (feedback)}}. Siga essa estrutura de JSON para cada uma das respostas das perguntas. Coloque nos pontos fracos o que o candidato pode melhorar e o motivo."}
     ],
     max_tokens=1000,
     temperature=0.9
