@@ -46,7 +46,6 @@ class UserService(metaclass=SingletonMeta):
     
     @staticmethod
     def create_access_token(data: dict, expires_delta: Union[timedelta, None] = None):
-        print('data',data)
         to_encode = data.copy()
         if expires_delta:
             expire = datetime.now(timezone.utc) + expires_delta
@@ -64,7 +63,6 @@ class UserService(metaclass=SingletonMeta):
         )
         try:
             payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-            print(payload)
             email: str = payload.get("sub")
             if email is None:
                 raise credentials_exception
