@@ -19,7 +19,6 @@ async def read_perguntas(vaga : str = Form(...),
                         db: Session = Depends(get_db),
                         token: str = Depends(oauth2_scheme)):
     user = service.get_current_user(db, token)
-    print(user)
     if not file.filename.endswith('.pdf'):
         return {"error": "Por favor, anexe um arquivo PDF"}
     contents = await file.read()

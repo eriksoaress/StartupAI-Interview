@@ -87,7 +87,7 @@ def get_perguntas(entrevista:PerguntasInDTO, contents, db: Session):
     response_format={ "type": "json_object" },
     messages=[
         {"role": "system", "content": "Você é um entrevistador entrevistando um candidato a emprego com saída no formato JSON."},
-        {"role": "user", "content": "Me de exatamente 3 perguntas personalizadas para a vaga: "+entrevista.vaga+" com a seguinte descrição: "+entrevista.link_descricao+", com esse curriculo: "+curriculo+", envie-as no seguinte formato {'pergunta(numero)': 'pergunta'}."}
+        {"role": "user", "content": "Me de exatamente 6 perguntas personalizadas para a vaga: "+entrevista.vaga+" com a seguinte descrição: "+entrevista.link_descricao+", com esse curriculo (considere apenas as coisas do curriculo que são relevantes para a área, senão pode fazer perguntas relacionados a valores da empresa, coisas que não estão no curriculo, história de vida, etc): "+curriculo+", envie-as no seguinte formato {'pergunta(numero)': 'pergunta'}."}
     ],
     max_tokens=1000,
     temperature=0.9
