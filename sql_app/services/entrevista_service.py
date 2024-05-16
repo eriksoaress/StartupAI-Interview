@@ -119,7 +119,7 @@ def get_avaliacao(entrevista_id: str, respostas: str, db: Session):
     response_format={ "type": "json_object" },
     messages=[
         {"role": "system", "content": "Você é um entrevistador rígido entrevistando um candidato a emprego com saída no formato JSON. Utilize o pronome 'Você' para se referir ao candidato."},
-        {"role": "user", "content": "Considerando as perguntas:["+perguntas+"] e somente as respostas:["+respostas+"], forneça um feedback com a saída no seguinte formato: {'pontos fortes': {'resposta(numero)': (feedback), 'resposta(numero)': (feedback)}, 'pontos fracos': {'resposta(numero)': (feedback), 'resposta(numero)': (feedback)} }. Siga essa estrutura de JSON para cada uma das respostas das perguntas (considere também deixar o valor para as chaves dos pontos fortes e fracos em branco caso não seja conveniente colocar algo, mas mantenha todas as chaves no formato resposta(numero)). Coloque nos pontos fracos o que o candidato pode melhorar e o motivo."}
+        {"role": "user", "content": "Considerando as perguntas:["+perguntas+"] e somente as respostas:["+respostas+"], forneça um feedback com a saída no seguinte formato: {'pontos_fortes': {'resposta(numero)': (feedback), 'resposta(numero)': (feedback)}, 'pontos_fracos': {'resposta(numero)': (feedback), 'resposta(numero)': (feedback)} }. Siga essa estrutura de JSON para cada uma das respostas das perguntas (considere também deixar o valor para as chaves dos pontos fortes e fracos em branco caso não seja conveniente colocar algo, mas mantenha todas as chaves no formato resposta(numero)). Coloque nos pontos fracos o que o candidato pode melhorar e o motivo."}
     ],
     max_tokens=1000,
     temperature=0.9
