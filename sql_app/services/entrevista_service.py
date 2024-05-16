@@ -83,7 +83,7 @@ def get_perguntas(entrevista:PerguntasInDTO, contents, db: Session):
         curriculo += page.extract_text()
 
     response = client.chat.completions.create(
-    model="gpt-3.5-turbo-0125",
+    model="gpt-4o",
     response_format={ "type": "json_object" },
     messages=[
         {"role": "system", "content": "Você é um entrevistador entrevistando um candidato a emprego com saída no formato JSON."},
@@ -111,9 +111,6 @@ def get_avaliacao(entrevista_id: str, respostas: str, db: Session):
     db_entrevista.link_audio = f'https://pontochaveai.s3.amazonaws.com/respostas_{entrevista_id}.txt'
 
     perguntas = get_text_from_s3(db.query(EntrevistaModel.link_perguntas).filter(EntrevistaModel.id == entrevista_id).first()[0])
-    print(perguntas)
-    print("****************************")
-    print(respostas)
     response = client.chat.completions.create(
     model="gpt-4o",
     response_format={ "type": "json_object" },
