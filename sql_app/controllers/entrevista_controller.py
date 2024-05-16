@@ -11,7 +11,7 @@ entrevista_router = APIRouter( prefix="/entrevistas", tags=["entrevistas"])
 
 service = UserService()
 
-@entrevista_router.post("/perguntas")
+@entrevista_router.post("/perguntass")
 async def read_perguntas(vaga : str = Form(...),
                         link_descricao: Optional[str] = Form(None),
                         file: UploadFile = File(...),
