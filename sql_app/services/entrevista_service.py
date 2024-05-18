@@ -10,17 +10,41 @@ from sqlalchemy.orm import Session
 from models import *
 from database import get_db
 from schemas.perguntasInDTO import PerguntasInDTO
+from deepgram import DeepgramClient, PrerecordedOptions, FileSource
 from models_ import *
 import uuid
+from fastapi import UploadFile
+
+
 
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
+DG_API_KEY = os.getenv("DG_API_KEY")
 client = OpenAI()
 
 s3_client = boto3.client(
     's3',
     aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'),
     aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY'))
+
+
+async def transc_audio(audio_file: UploadFile, db: Session):
+    try:
+        deepgram = DeepgramClient(DG_API_KEY)
+        buffer_data = await audio_file.read()  # Lê o conteúdo do arquivo
+        payload: FileSource = {
+            "buffer": buffer_data,
+        }
+        options = {
+            "punctuate": True,
+            "model": "nova-2",
+            "detect_language": True
+        }
+        response = deepgram.listen.prerecorded.v("1").transcribe_file(payload, options)
+        return response.results.channels[0].alternatives[0].transcript
+
+    except Exception as e:
+        return f"Exception: {e}"
 
 
 def cria_arquivo_perguntas(mensagem, id_entrevista):

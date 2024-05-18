@@ -31,3 +31,8 @@ def read_avaliacao(entrevista_id: str = Form(...),
                    link_audio: str = Form(...),
                     db: Session = Depends(get_db)):
     return get_avaliacao(entrevista_id, link_audio, db)
+
+@entrevista_router.post("/audio")
+async def read_audio(file: UploadFile = File(...), db: Session = Depends(get_db)):
+    transcription = await transc_audio(file, db)
+    return transcription
