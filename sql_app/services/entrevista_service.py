@@ -13,7 +13,8 @@ from schemas.perguntasInDTO import PerguntasInDTO
 from deepgram import DeepgramClient, PrerecordedOptions, FileSource
 from models_ import *
 import uuid
-from fastapi import UploadFile
+from fastapi import UploadFile, HTTPException
+import docx
 
 
 
@@ -94,17 +95,33 @@ def get_text_from_s3(link):
 
 
 
-def get_perguntas(entrevista:PerguntasInDTO, contents, db: Session):
+def get_perguntas(entrevista:PerguntasInDTO, contents, filename, db: Session):
     db_entrevista = EntrevistaModel(**entrevista.model_dump())
-    # Lendo o arquivo PDF
-    pdf_reader = PdfReader(io.BytesIO(contents))
-    num_pages = len(pdf_reader.pages)
     curriculo = ""
+    if filename.endswith('.pdf'):
+        try:
+            # Lendo o arquivo PDF
+            pdf_reader = PdfReader(io.BytesIO(contents))
+            num_pages = len(pdf_reader.pages)
+            
+            # Iterando através de cada página do PDF e extraindo o texto
+            for page_num in range(num_pages):
+                page = pdf_reader.pages[page_num]
+                curriculo += page.extract_text()
+        except Exception as e:
+            raise HTTPException(status_code=500, detail="Erro ao ler o arquivo PDF. Por favor, tente novamente.")
 
-    # Iterando através de cada página do PDF e extraindo o texto
-    for page_num in range(num_pages):
-        page = pdf_reader.pages[page_num]
-        curriculo += page.extract_text()
+    elif filename.endswith('.docx'):
+        try:
+            # Lendo o arquivo DOCX
+            doc = docx.Document(io.BytesIO(contents))
+
+            # Iterando através de cada parágrafo do DOCX e extraindo o texto
+            for paragraph in doc.paragraphs:
+                curriculo += paragraph.text + '\n'
+        except Exception as e:
+            raise HTTPException(status_code=500, detail="Erro ao ler o arquivo DOCX. Por favor, tente novamente.")
+
 
     response = client.chat.completions.create(
     model="gpt-4o",

@@ -1,4 +1,4 @@
-from fastapi import APIRouter,File, UploadFile, Depends,Form
+from fastapi import APIRouter,File, UploadFile, Depends,Form, HTTPException
 from services.entrevista_service import *
 from sqlalchemy.orm import Session
 from typing import Optional
@@ -18,12 +18,11 @@ async def read_perguntas(vaga : str = Form(...),
                         user_id: int = Form(...),
                         db: Session = Depends(get_db),
                         token: str = Depends(oauth2_scheme)):
-    user = service.get_current_user(db, token)
-    if not file.filename.endswith('.pdf'):
-        return {"error": "Por favor, anexe um arquivo PDF"}
+    if not file.filename.endswith('.pdf') and not file.filename.endswith('.docx'):
+        raise HTTPException(status_code=400, detail="Formato de arquivo inválido")
     contents = await file.read()
     entrevista = PerguntasInDTO(vaga=vaga, link_descricao=link_descricao, user_id=user_id)
-    return get_perguntas(entrevista, contents, db)
+    return get_perguntas(entrevista, contents, file.filename ,db)
 
 
 @entrevista_router.post("/respostas")

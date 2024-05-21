@@ -33,8 +33,15 @@ class UserService(metaclass=SingletonMeta):
         self.user_repo = UserRepository()
 
     def signup(self,user: UserIn,db: Session):
-        user_ = UserModel(name=user.name,email=user.email,password=get_password_hash(user.password),is_active=True,role=Roles.free)
-        return self.user_repo.signup(user_,db)
+        try:
+            user_ = UserModel(name=user.name,email=user.email,password=get_password_hash(user.password),is_active=True,role=Roles.free)
+            return self.user_repo.signup(user_,db)
+        except Exception as e:
+            if "Duplicate entry" in str(e):
+                raise HTTPException(status_code=400, detail="Email já está registrado!")
+            raise HTTPException(status_code=400, detail="Erro criando usuário! Verifique os dados informados!")
+
+        
 
     def authenticate_user(self,db, email: str, password: str):
         user = self.user_repo.get_user(db, email)
