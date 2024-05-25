@@ -15,7 +15,6 @@ class UserRepository(metaclass= SingletonMeta):
             raise
         finally:
             db.close()
-        print("User added")
         return user_db
     
     def get_user(self,db: Session, email: str):

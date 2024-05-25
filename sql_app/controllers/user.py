@@ -21,7 +21,6 @@ async def token(
     password: str = Form(...),
     db: Session = Depends(get_db)):
     user = service.authenticate_user(db, username, password)
-    print('user',user)
     if not user:
         raise HTTPException(
             status_code=400, detail="Incorrect username or password"

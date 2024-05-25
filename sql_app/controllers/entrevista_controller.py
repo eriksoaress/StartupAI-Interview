@@ -5,15 +5,17 @@ from typing import Optional
 from schemas.perguntasInDTO import PerguntasInDTO
 from database import get_db
 from services.user import *
+from services.entrevista_service import *
 
 entrevista_router = APIRouter( prefix="/entrevistas", tags=["entrevistas"])
 
 
 service = UserService()
+entrevista_service = EntrevistaService()
 
 @entrevista_router.post("/perguntas")
 async def read_perguntas(vaga : str = Form(...),
-                        link_descricao: Optional[str] = Form(None),
+                        link_descricao: str = Form(...),
                         file: UploadFile = File(...),
                         user_id: int = Form(...),
                         db: Session = Depends(get_db),
@@ -22,7 +24,7 @@ async def read_perguntas(vaga : str = Form(...),
         raise HTTPException(status_code=400, detail="Formato de arquivo inválido")
     contents = await file.read()
     entrevista = PerguntasInDTO(vaga=vaga, link_descricao=link_descricao, user_id=user_id)
-    return get_perguntas(entrevista, contents, file.filename ,db)
+    return entrevista_service.get_perguntas(entrevista, contents, file.filename ,db)
 
 
 @entrevista_router.post("/respostas")
@@ -30,7 +32,7 @@ def read_avaliacao(entrevista_id: str = Form(...),
                    link_audio: str = Form(...),
                     db: Session = Depends(get_db),
                     token: str = Depends(oauth2_scheme)):
-    return get_avaliacao(entrevista_id, link_audio, db)
+    return entrevista_service.get_avaliacao(entrevista_id, link_audio, db)
 
 @entrevista_router.post("/audio")
 async def read_audio(file: UploadFile = File(...), db: Session = Depends(get_db),token: str = Depends(oauth2_scheme)):

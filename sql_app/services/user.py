@@ -14,6 +14,7 @@ import os
 from schemas.user import UserIn
 from schemas.token import TokenData
 import re
+from sqlalchemy.exc import IntegrityError
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 SECRET_KEY = os.getenv("SECRET_HASH_KEY")
@@ -38,14 +39,20 @@ class UserService(metaclass=SingletonMeta):
             regex_email = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
             regex_password = r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$'
             if not re.match(regex_email, user.email):
+                print('email invalido')
                 raise HTTPException(status_code=400, detail="Email inválido!")
             if not re.match(regex_password, user.password):
+                print('senha ruim')
                 raise HTTPException(status_code=400, detail="Senha inválida! A senha deve conter no mínimo 8 caracteres, uma letra e um número!")
+            print('chegou aqui')
             user_ = UserModel(name=user.name,email=user.email,password=get_password_hash(user.password),is_active=True,role=Roles.free)
             return self.user_repo.signup(user_,db)
-        except Exception as e:
-            if "Duplicate entry" in str(e):
+        except IntegrityError as ie:
+            if "Duplicate entry" in str(ie):
                 raise HTTPException(status_code=400, detail="Email já está registrado!")
+        except HTTPException as he:
+            raise he  # Re-throw HTTP
+        except Exception as e:
             raise HTTPException(status_code=400, detail="Erro criando usuário! Verifique os dados informados!")
 
         
