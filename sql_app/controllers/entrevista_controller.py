@@ -28,10 +28,11 @@ async def read_perguntas(vaga : str = Form(...),
 @entrevista_router.post("/respostas")
 def read_avaliacao(entrevista_id: str = Form(...),
                    link_audio: str = Form(...),
-                    db: Session = Depends(get_db)):
+                    db: Session = Depends(get_db),
+                    token: str = Depends(oauth2_scheme)):
     return get_avaliacao(entrevista_id, link_audio, db)
 
 @entrevista_router.post("/audio")
-async def read_audio(file: UploadFile = File(...), db: Session = Depends(get_db)):
+async def read_audio(file: UploadFile = File(...), db: Session = Depends(get_db),token: str = Depends(oauth2_scheme)):
     transcription = await transc_audio(file, db)
     return transcription

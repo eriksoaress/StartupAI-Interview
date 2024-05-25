@@ -13,6 +13,7 @@ from passlib.context import CryptContext
 import os
 from schemas.user import UserIn
 from schemas.token import TokenData
+import re
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 SECRET_KEY = os.getenv("SECRET_HASH_KEY")
@@ -34,6 +35,12 @@ class UserService(metaclass=SingletonMeta):
 
     def signup(self,user: UserIn,db: Session):
         try:
+            regex_email = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+            regex_password = r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$'
+            if not re.match(regex_email, user.email):
+                raise HTTPException(status_code=400, detail="Email inválido!")
+            if not re.match(regex_password, user.password):
+                raise HTTPException(status_code=400, detail="Senha inválida! A senha deve conter no mínimo 8 caracteres, uma letra e um número!")
             user_ = UserModel(name=user.name,email=user.email,password=get_password_hash(user.password),is_active=True,role=Roles.free)
             return self.user_repo.signup(user_,db)
         except Exception as e:
