@@ -58,7 +58,7 @@ def cria_arquivo_perguntas(mensagem, id_entrevista):
         file.write(mensagem)
     bucket_name = 'pontochaveai'
     s3_client.upload_file(nome_arquivo, bucket_name, nome_arquivo)
-    os.remove(nome_arquivo)
+    # os.remove(nome_arquivo)
     return 
 
 def cria_arquivo_avaliacao(mensagem, id_entrevista):
@@ -67,7 +67,7 @@ def cria_arquivo_avaliacao(mensagem, id_entrevista):
         file.write(mensagem)
     bucket_name = 'pontochaveai'
     s3_client.upload_file(nome_arquivo, bucket_name, nome_arquivo)
-    os.remove(nome_arquivo)
+    # os.remove(nome_arquivo)
     return
 
 def cria_arquivo_respostas(mensagem, id_entrevista):
@@ -76,7 +76,7 @@ def cria_arquivo_respostas(mensagem, id_entrevista):
         file.write(mensagem)
     bucket_name = 'pontochaveai'
     s3_client.upload_file(nome_arquivo, bucket_name, nome_arquivo)
-    os.remove(nome_arquivo)
+    # os.remove(nome_arquivo)
     return
 
 def cria_arquivo_descricao(mensagem, id_entrevista):
@@ -85,7 +85,7 @@ def cria_arquivo_descricao(mensagem, id_entrevista):
         file.write(mensagem)
     bucket_name = 'pontochaveai'
     s3_client.upload_file(nome_arquivo, bucket_name, nome_arquivo)
-    os.remove(nome_arquivo)
+    # os.remove(nome_arquivo)
     return
 
 def get_text_from_s3(link):
@@ -94,7 +94,7 @@ def get_text_from_s3(link):
     s3_client.download_file(bucket_name, file_name, file_name)
     with open(file_name, 'r') as file:
         text = file.read()
-    os.remove(file_name)
+    # os.remove(file_name)
     return text
 
 
@@ -130,8 +130,6 @@ class EntrevistaService(metaclass = SingletonMeta):
             except Exception as e:
                 raise HTTPException(status_code=500, detail="Erro ao ler o arquivo DOCX. Por favor, tente novamente.")
 
-        print(entrevista)
-        print(curriculo)
         response = client.chat.completions.create(
         model="gpt-4o",
         response_format={ "type": "json_object" },
@@ -156,12 +154,11 @@ class EntrevistaService(metaclass = SingletonMeta):
 
 
     def get_avaliacao(self,entrevista_id: str, respostas: str, db: Session):
+        print(respostas)
         cria_arquivo_respostas(respostas, entrevista_id)
         db_entrevista = self.entrevistaRepository.get_entrevista(db,entrevista_id)
         db_entrevista.link_audio = f'https://pontochaveai.s3.amazonaws.com/respostas_{entrevista_id}.txt'
         perguntas = get_text_from_s3(self.entrevistaRepository.get_pergunta_from_entrevista(db,entrevista_id))
-        print(perguntas)
-        print(respostas)
         response = client.chat.completions.create(
         model="gpt-4o",
         response_format={ "type": "json_object" },
@@ -172,6 +169,7 @@ class EntrevistaService(metaclass = SingletonMeta):
         max_tokens=1000,
         temperature=0.9
         )
+        print('conteudo',response.choices[0].message.content)
         cria_arquivo_avaliacao(response.choices[0].message.content, entrevista_id)
         db_entrevista.link_avaliacao = f'https://pontochaveai.s3.amazonaws.com/avaliacao_{entrevista_id}.txt'
         self.entrevistaRepository.only_database_commit(db)
