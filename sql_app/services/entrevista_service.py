@@ -130,8 +130,6 @@ class EntrevistaService(metaclass = SingletonMeta):
             except Exception as e:
                 raise HTTPException(status_code=500, detail="Erro ao ler o arquivo DOCX. Por favor, tente novamente.")
 
-        print(entrevista)
-        print(curriculo)
         response = client.chat.completions.create(
         model="gpt-4o",
         response_format={ "type": "json_object" },
@@ -160,8 +158,6 @@ class EntrevistaService(metaclass = SingletonMeta):
         db_entrevista = self.entrevistaRepository.get_entrevista(db,entrevista_id)
         db_entrevista.link_audio = f'https://pontochaveai.s3.amazonaws.com/respostas_{entrevista_id}.txt'
         perguntas = get_text_from_s3(self.entrevistaRepository.get_pergunta_from_entrevista(db,entrevista_id))
-        print(perguntas)
-        print(respostas)
         response = client.chat.completions.create(
         model="gpt-4o",
         response_format={ "type": "json_object" },
