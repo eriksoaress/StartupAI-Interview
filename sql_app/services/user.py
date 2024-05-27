@@ -39,12 +39,9 @@ class UserService(metaclass=SingletonMeta):
             regex_email = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
             regex_password = r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$'
             if not re.match(regex_email, user.email):
-                print('email invalido')
                 raise HTTPException(status_code=400, detail="Email inválido!")
             if not re.match(regex_password, user.password):
-                print('senha ruim')
                 raise HTTPException(status_code=400, detail="Senha inválida! A senha deve conter no mínimo 8 caracteres, uma letra e um número!")
-            print('chegou aqui')
             user_ = UserModel(name=user.name,email=user.email,password=get_password_hash(user.password),is_active=True,role=Roles.free)
             return self.user_repo.signup(user_,db)
         except IntegrityError as ie:
@@ -74,6 +71,7 @@ class UserService(metaclass=SingletonMeta):
             expire = datetime.now(timezone.utc) + timedelta(minutes=15)
         to_encode.update({"exp": expire})
         encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+        
         return encoded_jwt
     
     def get_current_user(self,db,token: Annotated[str, Depends(oauth2_scheme)]):
