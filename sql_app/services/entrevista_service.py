@@ -58,7 +58,7 @@ def cria_arquivo_perguntas(mensagem, id_entrevista):
         file.write(mensagem)
     bucket_name = 'pontochaveai'
     s3_client.upload_file(nome_arquivo, bucket_name, nome_arquivo)
-    # os.remove(nome_arquivo)
+    os.remove(nome_arquivo)
     return 
 
 def cria_arquivo_avaliacao(mensagem, id_entrevista):
@@ -67,7 +67,7 @@ def cria_arquivo_avaliacao(mensagem, id_entrevista):
         file.write(mensagem)
     bucket_name = 'pontochaveai'
     s3_client.upload_file(nome_arquivo, bucket_name, nome_arquivo)
-    # os.remove(nome_arquivo)
+    os.remove(nome_arquivo)
     return
 
 def cria_arquivo_respostas(mensagem, id_entrevista):
@@ -76,7 +76,7 @@ def cria_arquivo_respostas(mensagem, id_entrevista):
         file.write(mensagem)
     bucket_name = 'pontochaveai'
     s3_client.upload_file(nome_arquivo, bucket_name, nome_arquivo)
-    # os.remove(nome_arquivo)
+    os.remove(nome_arquivo)
     return
 
 def cria_arquivo_descricao(mensagem, id_entrevista):
@@ -85,7 +85,7 @@ def cria_arquivo_descricao(mensagem, id_entrevista):
         file.write(mensagem)
     bucket_name = 'pontochaveai'
     s3_client.upload_file(nome_arquivo, bucket_name, nome_arquivo)
-    # os.remove(nome_arquivo)
+    os.remove(nome_arquivo)
     return
 
 def get_text_from_s3(link):
@@ -94,7 +94,7 @@ def get_text_from_s3(link):
     s3_client.download_file(bucket_name, file_name, file_name)
     with open(file_name, 'r') as file:
         text = file.read()
-    # os.remove(file_name)
+    os.remove(file_name)
     return text
 
 

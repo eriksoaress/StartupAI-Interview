@@ -13,7 +13,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://ponto-chave.vercel.app", "http://localhost:5173"],  # As origens que podem acessar este servidor
+    allow_origins=["https://ponto-chave.vercel.app"],  # As origens que podem acessar este servidor
     allow_credentials=True,
     allow_methods=["*"],  # Métodos HTTP permitidos
     allow_headers=["*"],  # Cabeçalhos HTTP permitidos
