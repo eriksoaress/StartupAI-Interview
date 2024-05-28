@@ -37,7 +37,7 @@ class UserService(metaclass=SingletonMeta):
     def signup(self,user: UserIn,db: Session):
         try:
             regex_email = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
-            regex_password = r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$'
+            regex_password = r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$'
             if not re.match(regex_email, user.email):
                 raise HTTPException(status_code=400, detail="Email inválido!")
             if not re.match(regex_password, user.password):
