@@ -43,7 +43,8 @@ async def transc_audio(audio_file: UploadFile, db: Session):
         options = {
             "punctuate": True,
             "model": "nova-2",
-            "detect_language": True
+            "detect_language": True,
+            "language": "pt-BR",
         }
         response = deepgram.listen.prerecorded.v("1").transcribe_file(payload, options)
         return response.results.channels[0].alternatives[0].transcript
